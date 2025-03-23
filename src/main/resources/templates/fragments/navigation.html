@@ -15,17 +15,21 @@
             margin-bottom: 20px;
             border-bottom: 1px solid #e9ecef;
         }
+
         .brand {
             font-size: 1.5em;
             font-weight: bold;
         }
+
         .nav-links {
             display: flex;
             gap: 15px;
         }
+
         .user-info {
             text-align: right;
         }
+
         .btn {
             display: inline-block;
             padding: 6px 12px;
@@ -42,11 +46,13 @@
             border-radius: 4px;
             text-decoration: none;
         }
+
         .btn-primary {
             color: #fff;
             background-color: #337ab7;
             border-color: #2e6da4;
         }
+
         .btn-danger {
             color: #fff;
             background-color: #d9534f;
@@ -55,32 +61,27 @@
     </style>
 </head>
 <body>
-    <!-- 导航栏片段 -->
-    <div th:fragment="navigation" class="nav-container">
-        <div class="brand">
-            <a th:href="@{/}">Taco Cloud</a>
+<!-- 导航栏片段 -->
+<div th:fragment="navigation" class="nav-container">
+    <div class="brand">
+        <a th:href="@{/}">Taco Cloud</a>
+    </div>
+
+    <div class="user-info">
+        <!-- 未登录状态 -->
+        <div sec:authorize="!isAuthenticated()">
+            <a th:href="@{/login}" class="btn btn-primary">登录</a>
+            <a th:href="@{/register}" class="btn">注册</a>
         </div>
-        
-        <div class="nav-links">
-            <a th:href="@{/design}">设计塔可</a>
-            <a th:href="@{/orders}">订购塔可</a>
-        </div>
-        
-        <div class="user-info">
-            <!-- 未登录状态 -->
-            <div sec:authorize="!isAuthenticated()">
-                <a th:href="@{/login}" class="btn btn-primary">登录</a>
-                <a th:href="@{/register}" class="btn">注册</a>
-            </div>
-            
-            <!-- 已登录状态 -->
-            <div sec:authorize="isAuthenticated()">
-                <span>欢迎，<span sec:authentication="name">用户</span>！</span>
-                <form method="POST" th:action="@{/logout}" style="display: inline;">
-                    <input type="submit" value="退出" class="btn btn-danger"/>
-                </form>
-            </div>
+
+        <!-- 已登录状态 -->
+        <div sec:authorize="isAuthenticated()">
+            <span>欢迎，<span sec:authentication="name">用户</span>！</span>
+            <form method="POST" th:action="@{/logout}" style="display: inline;">
+                <input type="submit" value="退出" class="btn btn-danger"/>
+            </form>
         </div>
     </div>
+</div>
 </body>
 </html> 
