@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en" 
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Taco Cloud</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .hero {
+            text-align: center;
+            padding: 40px 0;
+        }
+        .hero img {
+            max-width: 200px;
+            margin-bottom: 20px;
+        }
+        .hero h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #5cb85c;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导入导航栏片段 -->
+    <div th:replace="fragments/navigation :: navigation"></div>
+
+    <div class="container">
+        <div class="hero">
+            <img th:src="@{/images/TacoCloud.png}" alt="Taco Cloud Logo"/>
+            <h1>欢迎来到Taco Cloud！</h1>
+            <p>我们提供最美味的塔可，您可以自己设计或选择我们的特色菜单。</p>
+            
+            <div class="actions">
+                <a th:href="@{/design}" class="btn">设计塔可</a>
+                <a th:href="@{/orders}" class="btn">订购塔可</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

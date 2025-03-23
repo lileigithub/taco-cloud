@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Taco Cloud - 注册</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .error-message {
+            color: red;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        .field-error {
+            color: red;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+        .register-form {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .form-field {
+            margin-bottom: 15px;
+        }
+        .form-field label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-field input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .button {
+            margin-top: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .button input[type="submit"] {
+            padding: 10px 20px;
+            background-color: #5cb85c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .register-image {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .register-image img {
+            max-width: 150px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        input.error {
+            border: 1px solid red;
+        }
+        .btn {
+            display: inline-block;
+            padding: 8px 15px;
+            background-color: #f8f9fa;
+            color: #333;
+            text-decoration: none;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+        }
+    </style>
+    <script>
+        // 前端表单验证
+        function validateForm() {
+            let isValid = true;
+            const errorMessages = {};
+            
+            // 获取表单元素
+            const username = document.getElementById('username');
+            const password = document.getElementById('password');
+            const confirm = document.getElementById('confirm');
+            const fullname = document.getElementById('fullname');
+            const zip = document.getElementById('zip');
+            const phone = document.getElementById('phone');
+            
+            // 清除所有错误样式
+            const inputs = document.querySelectorAll('input');
+            inputs.forEach(input => {
+                input.classList.remove('error');
+                const errorDiv = document.querySelector(`[data-for="${input.id}"]`);
+                if (errorDiv) errorDiv.textContent = '';
+            });
+            
+            // 验证用户名
+            if (!username.value.trim()) {
+                errorMessages.username = '用户名不能为空';
+                username.classList.add('error');
+                isValid = false;
+            } else if (username.value.length < 3 || username.value.length > 20) {
+                errorMessages.username = '用户名长度必须在3-20个字符之间';
+                username.classList.add('error');
+                isValid = false;
+            }
+            
+            // 验证密码
+            if (!password.value) {
+                errorMessages.password = '密码不能为空';
+                password.classList.add('error');
+                isValid = false;
+            } else if (password.value.length < 6) {
+                errorMessages.password = '密码长度必须至少6个字符';
+                password.classList.add('error');
+                isValid = false;
+            }
+            
+            // 验证确认密码
+            if (!confirm.value) {
+                errorMessages.confirm = '确认密码不能为空';
+                confirm.classList.add('error');
+                isValid = false;
+            } else if (password.value !== confirm.value) {
+                errorMessages.confirm = '密码和确认密码不匹配';
+                confirm.classList.add('error');
+                isValid = false;
+            }
+            
+            // 验证姓名
+            if (!fullname.value.trim()) {
+                errorMessages.fullname = '姓名不能为空';
+                fullname.classList.add('error');
+                isValid = false;
+            }
+            
+            // 验证邮编
+            if (zip.value && !/^\d{6}$/.test(zip.value)) {
+                errorMessages.zip = '邮编必须是6位数字';
+                zip.classList.add('error');
+                isValid = false;
+            }
+            
+            // 验证电话
+            if (phone.value && !/^1[3-9]\d{9}$/.test(phone.value)) {
+                errorMessages.phone = '请输入有效的手机号码';
+                phone.classList.add('error');
+                isValid = false;
+            }
+            
+            // 显示错误消息
+            for (const field in errorMessages) {
+                const errorDiv = document.querySelector(`[data-for="${field}"]`);
+                if (errorDiv) errorDiv.textContent = errorMessages[field];
+            }
+            
+            return isValid;
+        }
+    </script>
+</head>
+
+<body>
+    <!-- 导入导航栏片段 -->
+    <div th:replace="fragments/navigation :: navigation"></div>
+
+    <div class="container">
+        <h1>用户注册</h1>
+        
+        <div class="register-image">
+            <img th:src="@{/images/TacoCloud.png}" alt="Taco Cloud Logo"/>
+        </div>
+        
+        <div class="register-form">
+            <form method="POST" th:action="@{/register}" th:object="${registrationForm}" id="registerForm" onsubmit="return validateForm()">
+                <!-- 全局错误提示区域 -->
+                <div class="error-message" th:if="${#fields.hasErrors('*')}">请修正表单中的错误</div>
+                
+                <div class="form-field">
+                    <label for="username">用户名: </label>
+                    <input type="text" th:field="*{username}" id="username"/>
+                    <div class="field-error" th:if="${#fields.hasErrors('username')}" th:errors="*{username}" data-for="username"></div>
+                    <div class="field-error" data-for="username"></div>
+                </div>
+                
+                <div class="form-field">
+                    <label for="password">密码: </label>
+                    <input type="password" th:field="*{password}" id="password"/>
+                    <div class="field-error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}" data-for="password"></div>
+                    <div class="field-error" data-for="password"></div>
+                </div>
+                
+                <div class="form-field">
+                    <label for="confirm">确认密码: </label>
+                    <input type="password" th:field="*{confirm}" id="confirm"/>
+                    <div class="field-error" th:if="${#fields.hasErrors('confirm')}" th:errors="*{confirm}" data-for="confirm"></div>
+                    <div class="field-error" data-for="confirm"></div>
+                </div>
+                
+                <div class="form-field">
+                    <label for="fullname">姓名: </label>
+                    <input type="text" th:field="*{fullname}" id="fullname"/>
+                    <div class="field-error" th:if="${#fields.hasErrors('fullname')}" th:errors="*{fullname}" data-for="fullname"></div>
+                    <div class="field-error" data-for="fullname"></div>
+                </div>
+                
+                <div class="form-field">
+                    <label for="street">街道: </label>
+                    <input type="text" th:field="*{street}" id="street"/>
+                    <div class="field-error" th:if="${#fields.hasErrors('street')}" th:errors="*{street}" data-for="street"></div>
+                    <div class="field-error" data-for="street"></div>
+                </div>
+                
+                <div class="form-field">
+                    <label for="city">城市: </label>
+                    <input type="text" th:field="*{city}" id="city"/>
+                    <div class="field-error" th:if="${#fields.hasErrors('city')}" th:errors="*{city}" data-for="city"></div>
+                    <div class="field-error" data-for="city"></div>
+                </div>
+                
+                <div class="form-field">
+                    <label for="state">省份: </label>
+                    <input type="text" th:field="*{state}" id="state"/>
+                    <div class="field-error" th:if="${#fields.hasErrors('state')}" th:errors="*{state}" data-for="state"></div>
+                    <div class="field-error" data-for="state"></div>
+                </div>
+                
+                <div class="form-field">
+                    <label for="zip">邮编: </label>
+                    <input type="text" th:field="*{zip}" id="zip"/>
+                    <div class="field-error" th:if="${#fields.hasErrors('zip')}" th:errors="*{zip}" data-for="zip"></div>
+                    <div class="field-error" data-for="zip"></div>
+                </div>
+                
+                <div class="form-field">
+                    <label for="phone">电话: </label>
+                    <input type="text" th:field="*{phone}" id="phone"/>
+                    <div class="field-error" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}" data-for="phone"></div>
+                    <div class="field-error" data-for="phone"></div>
+                </div>
+                
+                <div class="button">
+                    <input type="submit" value="注册"/>
+                    <a th:href="@{/login}" class="btn">已有账号？去登录</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
